@@ -9,13 +9,11 @@ function choose(playlistId, access_token) {
         console.log(response2);
         response2.tracks.items.forEach(function (item) {
           let track = item.track;
-          let ytquery = "" + track.name;
+          let ytquery = track.name+" ";
           track.artists.forEach(function (artist) {
-            ytquery += `+${artist.name}`;
+            ytquery += `${artist.name} `;
           });
-          ytquery = ytquery.replace(/ /g, '+');
-          let ytsearch = `https://www.youtube.com/results?search_query=${ytquery}`;
-          console.log(ytsearch);
+          execute(ytquery);
           //get requests for yt links don't work because they're blocked by CORS policy of youtube
         });
       }

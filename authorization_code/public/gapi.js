@@ -12,15 +12,18 @@ console.log("gapi code ran");
             function (err) { console.error("Error loading GAPI client for API", err); });
       }
       // Make sure the client is loaded and sign-in is complete before calling this method.
-      function execute() {
+      function execute(searchterm) {
+        console.log(searchterm);
         return gapi.client.youtube.search.list({
           "part": "snippet",
-          "maxResults": 25,
-          "q": "dota basshunter"
+          "maxResults": 1,
+          "type":"video",
+          "q": searchterm
         })
           .then(function (response) {
             // Handle the results here (response.result has the parsed body).
             console.log("Response", response);
+            console.log("video id:", response.result.items[0].id.videoId);
           },
             function (err) { console.error("Execute error", err); });
       }
