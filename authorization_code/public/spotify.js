@@ -13,7 +13,7 @@ function choose(playlistId, access_token) {
           track.artists.forEach(function (artist) {
             ytquery += `${artist.name} `;
           });
-          execute(ytquery);
+          ytsearch(ytquery);
           //get requests for yt links don't work because they're blocked by CORS policy of youtube
         });
       }

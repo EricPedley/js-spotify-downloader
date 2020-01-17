@@ -12,7 +12,7 @@ console.log("gapi code ran");
             function (err) { console.error("Error loading GAPI client for API", err); });
       }
       // Make sure the client is loaded and sign-in is complete before calling this method.
-      function execute(searchterm) {
+      function ytsearch(searchterm) {
         console.log(searchterm);
         return gapi.client.youtube.search.list({
           "part": "snippet",
@@ -27,6 +27,7 @@ console.log("gapi code ran");
           },
             function (err) { console.error("Execute error", err); });
       }
+      
       gapi.load("client:auth2", function () {
         gapi.auth2.init({ client_id: "63394597738-aphgmefnm649json040n8agi4p7bbsqe.apps.googleusercontent.com" });
       });
