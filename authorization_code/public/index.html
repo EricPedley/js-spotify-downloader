@@ -50,9 +50,24 @@
             <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
             <dt>Country</dt><dd>{{country}}</dd>
           </dl>
-        </div>
-      </div>
-    </script>
+          </div>
+          </div>
+  </script>
+  <script>
+    console.log("script is running?");
+    [
+      'https://apis.google.com/js/api.js',
+      'gapi.js'
+    ].forEach(function (src) {
+      console.log("Adding scripts");
+      var script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      document.head.appendChild(script);
+    });
+  </script>
+  <button onclick="authenticate().then(loadClient)">authorize and load</button>
+  <button onclick="execute()">execute</button>
 
   <script id="oauth-template" type="text/x-handlebars-template">
       <h2>oAuth info</h2>
@@ -64,125 +79,7 @@
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <script>
-    function choose(playlistId,access_token) {
-        $.ajax({//playlists
-          url: `https://api.spotify.com/v1/playlists/${playlistId}`,
-          headers: {
-            'Authorization': 'Bearer ' + access_token
-          },
-          success: function (response2) {
-            console.log("playlist grabbing ajax worked");
-            console.log(response2);
-            response2.tracks.items.forEach(function(item) {
-              let track=item.track;
-              let ytquery = ""+track.name;
-              track.artists.forEach(function(artist) {
-                ytquery+=`+${artist.name}`;
-              });
-              ytquery=ytquery.replace(/ /g,'+');
-              let ytsearch = `https://www.youtube.com/results?search_query=${ytquery}`;
-              console.log(ytsearch);
-              $.get(ytsearch,headers: {//TODO add headers, see this:https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe
-                ''
-              },function(text) {
-                console.log("get worked for youtube link");
-              });
-            });
-          }
-        });
-      }
-    (function () {
-      
-      /**
-       * Obtains parameters from the hash of the URL
-       * @return Object
-       */
-      function getHashParams() {
-        var hashParams = {};
-        var e, r = /([^&;=]+)=?([^&;]*)/g,
-          q = window.location.hash.substring(1);
-        while (e = r.exec(q)) {
-          hashParams[e[1]] = decodeURIComponent(e[2]);
-        }
-        return hashParams;
-      }
-
-      var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-        userProfileTemplate = Handlebars.compile(userProfileSource),
-        userProfilePlaceholder = document.getElementById('user-profile');
-
-      var oauthSource = document.getElementById('oauth-template').innerHTML,
-        oauthTemplate = Handlebars.compile(oauthSource),
-        oauthPlaceholder = document.getElementById('oauth');
-
-      var params = getHashParams();
-
-      var access_token = params.access_token,
-        refresh_token = params.refresh_token,
-        error = params.error;
-
-      if (error) {
-        alert('There was an error during the authentication');
-      } else {
-        if (access_token) {
-          // render oauth info
-          oauthPlaceholder.innerHTML = oauthTemplate({
-            access_token: access_token,
-            refresh_token: refresh_token
-          });
-
-          $.ajax({
-            url: 'https://api.spotify.com/v1/me',
-            headers: {
-              'Authorization': 'Bearer ' + access_token
-            },
-            success: function (response) {
-              userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-              let id = response.id;
-              console.log(id);
-              $.ajax({//playlists
-                url: `https://api.spotify.com/v1/users/${id}/playlists`,
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function (response2) {
-                  console.log("succcess of 2nd ajax");
-                  response2.items.forEach(function (playlist) {
-                    userProfilePlaceholder.innerHTML += `<dt><a onclick = "choose('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
-                  });
-
-                }
-              });
-              $('#login').hide();
-              $('#loggedin').show();
-
-            }
-          });
-
-        } else {
-          // render initial screen
-          $('#login').show();
-          $('#loggedin').hide();
-        }
-
-        document.getElementById('obtain-new-token').addEventListener('click', function () {
-          $.ajax({
-            url: '/refresh_token',
-            data: {
-              'refresh_token': refresh_token
-            }
-          }).done(function (data) {
-            access_token = data.access_token;
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-          });
-        }, false);
-      }
-    })();
-  </script>
+  <script src = "spotify.js"></script>
 </body>
 
 </html>
