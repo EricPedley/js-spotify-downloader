@@ -28,6 +28,32 @@ function ytsearch(searchterm) {
       function (err) { console.error("Execute error", err); });
 }
 
+function searchAdd(searchterm, playlistId) {
+  console.log(searchterm);
+  return gapi.client.youtube.search.list({
+    "part": "snippet",
+    "maxResults": 1,
+    "type": "video",
+    "q": searchterm
+  })
+    .then(function (response) {
+      // Handle the results here (response.result has the parsed body).
+      console.log("Response", response);
+      console.log("video id:", response.result.items[0].id.videoId);
+      let id = response.result.items[0].id.videoId
+      playlistItems.insert({
+        "playlistId": playlistId,
+        "resourceId": {
+          "kind": "youtube#video",
+          "videoId": id
+        }
+      }).then(function(response) {
+
+      }, function(err) {console.log("Error",err);});
+    },
+      function (err) { console.error("Execute error", err); });
+  }
+
 function listPlaylists() {
   return gapi.client.youtube.playlists.list({
     "part": "snippet,contentDetails",

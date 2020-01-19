@@ -7,7 +7,8 @@ function choose(playlistId, access_token) {
       success: function (response2) {
         console.log("playlist grabbing ajax worked");
         console.log(response2);
-        response2.tracks.items.forEach(function (item) {
+        listPlaylists();
+        response2.tracks.items.forEach(function (item) {//for each track in the playlist
           let track = item.track;
           let ytquery = track.name+" ";
           track.artists.forEach(function (artist) {
