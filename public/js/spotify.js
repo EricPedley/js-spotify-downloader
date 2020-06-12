@@ -8,7 +8,7 @@ How the program works in steps:
 -when they click on a youtube playlist it does the converting(with the "selectYTPlaylist" function in gapi.js, which calls the "searchAdd" function on each track)
 */
 var tracks;
-function selectSpotifyPlaylist(playlistId, access_token) {//this is fired when the user selects a playlist
+function selectSpotifyPlaylist(playlistId) {//this is fired when the user selects a playlist
   $.ajax({//playlists
     url: `https://api.spotify.com/v1/playlists/${playlistId}`,
     headers: {
@@ -37,13 +37,6 @@ function getHashParams() {
   return hashParams;
 }
 
-var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-  userProfileTemplate = Handlebars.compile(userProfileSource),
-  userProfilePlaceholder = document.getElementById('user-profile');
-
-var oauthSource = document.getElementById('oauth-template').innerHTML,
-  oauthTemplate = Handlebars.compile(oauthSource),
-  oauthPlaceholder = document.getElementById('oauth');
 
 var params = getHashParams();
 
@@ -51,15 +44,12 @@ var access_token = params.access_token,
   refresh_token = params.refresh_token,
   error = params.error;
 
+var spotifyWindow = document.querySelector("#spotify-loggedin");
+
 if (error) {
   alert('There was an error during the authentication');
 } else {
   if (access_token) {
-    // render oauth info
-    oauthPlaceholder.innerHTML = oauthTemplate({
-      access_token: access_token,
-      refresh_token: refresh_token
-    });
 
     $.ajax({
       url: 'https://api.spotify.com/v1/me',
@@ -68,8 +58,8 @@ if (error) {
       },
       success: function (response) {
         console.log("response to spotify auth: ",response);
-        userProfilePlaceholder.innerHTML = userProfileTemplate(response);
         let id = response.id;
+        spotifyWindow.innerHTML+=`<h3>Logged in to Spotify as ${response.display_name}<h3>`
         console.log(id);
         $.ajax({//playlists
           url: `https://api.spotify.com/v1/users/${id}/playlists`,
@@ -78,22 +68,23 @@ if (error) {
           },
           success: function (response2) {
             console.log("succcess of 2nd ajax");
+            renderSpotifyPlaylists(response2.items);
             response2.items.forEach(function (playlist) {//this is where the playlists are rendered
-              userProfilePlaceholder.innerHTML += `<dt><a onclick = "selectSpotifyPlaylist('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
+              spotifyWindow.innerHTML += `<a  href = "" onclick = "(event)=>{event.preventDefault(); selectSpotifyPlaylist('${playlist.id}');}">${playlist.name}</a><br>`;
             });
 
           }
         });
-        $('#login').hide();
-        $('#loggedin').show();
+        $('#spotify-login').hide();
+        $('#spotify-loggedin').show();
 
       }
     });
 
   } else {
     // render initial screen
-    $('#login').show();
-    $('#loggedin').hide();
+    $('#spotify-login').show();
+    $('#spotify-loggedin').hide();
   }
 
   document.getElementById('obtain-new-token').addEventListener('click', function () {
@@ -110,4 +101,10 @@ if (error) {
       });
     });
   }, false);
+}
+
+function renderSpotifyPlaylists(playlists) {
+  playlists.forEach(function(playlist) {
+    $("#spotifyhalf").innerHTML += `<dt><a onclick = "selectSpotifyPlaylist('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
+  });
 }
