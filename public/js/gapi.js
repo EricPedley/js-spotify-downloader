@@ -2,7 +2,6 @@ console.log("gapi code ran");
 
 var youtubeScreen = document.querySelector("#youtube-loggedin");
 var selectedYTPlaylist;
-
 function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to the playlist
   console.log(`SearchAdd being run`);
   return gapi.client.youtube.search.list({
@@ -11,8 +10,7 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
     "type": "video",
     "q": searchTerm
   })
-    .then(function (response) {
-      // Handle the results here (response.result has the parsed body).
+    .then(function (response) {//this is the response to the search api call
       console.log("Response", response);
       console.log(`video id for ${searchTerm}:`, response.result.items[0].id.videoId);
       let id = response.result.items[0].id.videoId
@@ -29,7 +27,7 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
             }
           }
         }
-      }).then(function (response) {
+      }).then(function (response) {//this is the response to the playlist insert api call
         console.log(`response to playlist insert for ${searchTerm}:`, response);
       }, function (err) { console.log("Error", err); });
     },
@@ -44,7 +42,7 @@ function listYTPlaylists() {
     .then(function (response) {
       // Handle the results here (response.result has the parsed body).
       console.log("Response", response);
-      youtubeScreen.innerHTML=`<h3>Logged in to Youtube as ${response.result.items[0].snippet.channelTitle}<h3>`;
+      youtubeScreen.innerHTML = `<h3>Logged in to Youtube as ${response.result.items[0].snippet.channelTitle}<h3>`;
       response.result.items.forEach(function (playlist) {
         youtubeScreen.innerHTML += `<button id = '${playlist.id}' class = "pressable playlist-button" onclick = "selectYTPlaylist('${playlist.id}');">${playlist.snippet.title}</button><br>`
       });
@@ -53,12 +51,12 @@ function listYTPlaylists() {
 }
 
 function selectYTPlaylist(ytPlaylistID) {
-  if(selectedYTPlaylist) {
-    document.getElementById(selectedYTPlaylist).style.backgroundColor="transparent";
+  if (selectedYTPlaylist) {
+    document.getElementById(selectedYTPlaylist).style.backgroundColor = "transparent";
   }
-  selectedYTPlaylist=ytPlaylistID;
-  document.getElementById(ytPlaylistID).style.backgroundColor="#FF0000";
-  if(selectedSpotifyPlaylist) {
+  selectedYTPlaylist = ytPlaylistID;
+  document.getElementById(ytPlaylistID).style.backgroundColor = "#FF0000";
+  if (selectedSpotifyPlaylist) {
     displayConvertButton();
   }
 }
@@ -84,12 +82,12 @@ function loadClient() {
       $('#youtube-login').hide();
       $('#youtube-loggedin').show();
       listYTPlaylists();
-      instructions.innerHTML="Select playlists to continue";
+      instructions.innerHTML = "Select playlists to continue";
     },
       function (err) { console.error("Error loading GAPI client for API", err); });
 }
 function displayConvertButton() {
-  instructions.innerHTML='<button id="convert-button" class="pressable" onclick="convert()">Convert Playlist</button>';
+  instructions.innerHTML = '<button id="convert-button" class="pressable" onclick="convert()">Convert Playlist</button>';
 }
 function convert() {
   console.log('convert pressed');
@@ -99,7 +97,21 @@ function convert() {
     track.artists.forEach(function (artist) {
       ytquery += `${artist.name} `;
     });
-    searchAdd(ytquery, selectedYTPlaylist);//this function is in gapi.js
-    //get requests for yt links don't work because they're blocked by CORS policy of youtube
+    //searchAdd(ytquery, selectedYTPlaylist);//this function is in gapi.js
   });
+  $("#popup").show();
+  let popup = document.querySelector("#popup")
+  popup.innerHTML = "<h3>Playlist has been converted</h3>";
+  popup.innerHTML += `<a id = "playlist-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
+  popup.innerHTML += `<button id="convert-another" class="pressable" onclick="resetSelection()">Convert another</button>`;
+}
+function resetSelection() {
+  $('#popup').hide();
+  document.getElementById(selectedYTPlaylist).style.backgroundColor = "transparent";
+  selectedYTPlaylist = null;
+  let selectedButton = document.getElementById(selectedSpotifyPlaylist);
+  selectedButton.style.backgroundColor = "transparent";
+  selectedButton.style.color = "#FFFFFF";
+  selectedSpotifyPlaylist = null;
+  instructions.innerHTML = "Select playlists to continue";
 }

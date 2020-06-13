@@ -73,11 +73,27 @@ body {
     font-size:1.5em;
 }
 #popup {
+    display:none;
     position:fixed;
+    padding-top:10px;
     top:30%;
     left:50%;
     margin-left:-20vw;
     width:40vw;
     height:50vh;
     background-color:#121212;
+    text-align:center;
+    border-radius:20px;
+}
+#playlist-link {
+    background-color:#FF0000;
+    padding-top:5px;
+    color:white;
+}
+#convert-another {
+    position:relative;
+    top:1em;
+    padding: 5px 10px 5px;
+    border-radius:10px;
+    background-color:#FFFFFF;
 }
