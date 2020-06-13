@@ -26,7 +26,7 @@
                 <div class="col-3"><img id="logo" src="images/icon.png"></div>
                 <div class="col-9">
                     <h1>Spotify To Youtube Playlist Converter</h1>
-                    <div id='instructions'>Log in to both below to start</div>
+                    <div id='instructions'>Log in with Spotify first</div>
                 </div>
             </div>
 
@@ -38,11 +38,14 @@
                 <a href="/login" id="spotify-login"><h3>Log in with Spotify</h3></a>
                 <div id="spotify-loggedin"></div>
             </div>
+            
             <div class="col-md-6 half" id="youtube-half">
                 <button onclick = "authenticate().then(loadClient)" id="youtube-login" class="pressable"><h3>Log in with Youtube</h3></button>
                 <div id="youtube-loggedin"></div>
             </div>
         </div>
+
+        <div id="popup">Hello from popup</div>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="js/index.js"></script>

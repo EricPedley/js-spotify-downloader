@@ -1,6 +1,8 @@
 console.log("gapi code ran");
 
 var youtubeScreen = document.querySelector("#youtube-loggedin");
+var selectedYTPlaylist;
+
 function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to the playlist
   console.log(`SearchAdd being run`);
   return gapi.client.youtube.search.list({
@@ -42,23 +44,23 @@ function listYTPlaylists() {
     .then(function (response) {
       // Handle the results here (response.result has the parsed body).
       console.log("Response", response);
+      youtubeScreen.innerHTML=`<h3>Logged in to Youtube as ${response.result.items[0].snippet.channelTitle}<h3>`;
       response.result.items.forEach(function (playlist) {
-        youtubeScreen.innerHTML += `<button class = "pressable playlist-button" onclick = "(event)=>{event.preventDefault(); selectYTPlaylist('${playlist.id}');}">${playlist.snippet.title}</button>`
+        youtubeScreen.innerHTML += `<button id = '${playlist.id}' class = "pressable playlist-button" onclick = "selectYTPlaylist('${playlist.id}');">${playlist.snippet.title}</button><br>`
       });
     },
       function (err) { console.error("Execute error", err); });
 }
 
 function selectYTPlaylist(ytPlaylistID) {
-  tracks.forEach(function (item) {//for each track in the playlist
-    let track = item.track;
-    let ytquery = track.name + " ";
-    track.artists.forEach(function (artist) {
-      ytquery += `${artist.name} `;
-    });
-    searchAdd(ytquery, ytPlaylistID);//this function is in gapi.js
-    //get requests for yt links don't work because they're blocked by CORS policy of youtube
-  });
+  if(selectedYTPlaylist) {
+    document.getElementById(selectedYTPlaylist).style.backgroundColor="transparent";
+  }
+  selectedYTPlaylist=ytPlaylistID;
+  document.getElementById(ytPlaylistID).style.backgroundColor="#FF0000";
+  if(selectedSpotifyPlaylist) {
+    displayConvertButton();
+  }
 }
 
 gapi.load("client:auth2", function () {
@@ -71,15 +73,33 @@ function authenticate() {
     .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
     .then(function () {
       console.log("Sign-in successful");
-      $('#youtube-login').hide();
-      $('#youtube-loggedin').show();
-      youtubeScreen.innerHTML += `<h3>Logged in to Youtube<h3>`
+
     },
       function (err) { console.error("Error signing in", err); });
 }
 function loadClient() {
   gapi.client.setApiKey("");
   return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
-    .then(function () { console.log("GAPI client loaded for API"); },
+    .then(function () {
+      $('#youtube-login').hide();
+      $('#youtube-loggedin').show();
+      listYTPlaylists();
+      instructions.innerHTML="Select playlists to continue";
+    },
       function (err) { console.error("Error loading GAPI client for API", err); });
+}
+function displayConvertButton() {
+  instructions.innerHTML='<button id="convert-button" class="pressable" onclick="convert()">Convert Playlist</button>';
+}
+function convert() {
+  console.log('convert pressed');
+  tracks.forEach(function (item) {//for each track in the playlist
+    let track = item.track;
+    let ytquery = track.name + " ";
+    track.artists.forEach(function (artist) {
+      ytquery += `${artist.name} `;
+    });
+    searchAdd(ytquery, selectedYTPlaylist);//this function is in gapi.js
+    //get requests for yt links don't work because they're blocked by CORS policy of youtube
+  });
 }

@@ -12,7 +12,7 @@ a:visited {
     color:white;
 }
 #spotify-login {
-    background-color:#1ed760ff;
+    background-color:#1ed760;
     color:#121212;
     margin-top:30%;
 }
@@ -20,6 +20,7 @@ a:visited {
     text-align:left;
 }
 #youtube-login {
+    display:none;
     background-color:#FF0000;
     color:#FFFFFF;
     margin-top:30%;
@@ -29,7 +30,10 @@ a:visited {
     border:none;
 }
 .pressable {
+    border:none;
     cursor:pointer;
+    border-radius:5px;
+    text-align:left;
 }
 .pressable:hover {
     text-decoration:underline;
@@ -63,6 +67,17 @@ body {
     border:none;
     color:white;
 }
-::-webkit-scrollbar-thumb {
-    background: white;
-  }
+#convert-button {
+    background-color:#FFFFFF;
+    color:#121212;
+    font-size:1.5em;
+}
+#popup {
+    position:fixed;
+    top:30%;
+    left:50%;
+    margin-left:-20vw;
+    width:40vw;
+    height:50vh;
+    background-color:#121212;
+}

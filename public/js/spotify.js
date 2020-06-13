@@ -8,6 +8,8 @@ How the program works in steps:
 -when they click on a youtube playlist it does the converting(with the "selectYTPlaylist" function in gapi.js, which calls the "searchAdd" function on each track)
 */
 var tracks;
+var selectedSpotifyPlaylist;
+var instructions = document.getElementById('instructions');
 function selectSpotifyPlaylist(playlistId) {//this is fired when the user selects a playlist
   $.ajax({//playlists
     url: `https://api.spotify.com/v1/playlists/${playlistId}`,
@@ -15,10 +17,19 @@ function selectSpotifyPlaylist(playlistId) {//this is fired when the user select
       'Authorization': 'Bearer ' + access_token
     },
     success: function (response2) {
-      console.log("playlist grabbing ajax worked");
-      console.log(response2);
-      listYTPlaylists();//this is in gapi.js, it lists the user's youtube playlists
+      if (selectedSpotifyPlaylist) {
+        let selectedButton = document.getElementById(selectedSpotifyPlaylist);
+        selectedButton.style.backgroundColor = "transparent";
+        selectedButton.style.color = "#FFFFFF";
+      }
+      selectedSpotifyPlaylist = playlistId;
+      let playlistButton = document.getElementById(playlistId);
+      playlistButton.style.backgroundColor = "#1ed760";
+      playlistButton.style.color = "#121212";
       tracks = response2.tracks.items;//this value is used in gapi.js
+      if(selectedYTPlaylist) {
+        displayConvertButton();
+      }
     }
   });
 }
@@ -57,9 +68,9 @@ if (error) {
         'Authorization': 'Bearer ' + access_token
       },
       success: function (response) {
-        console.log("response to spotify auth: ",response);
+        console.log("response to spotify auth: ", response);
         let id = response.id;
-        spotifyWindow.innerHTML+=`<h3>Logged in to Spotify as ${response.display_name}<h3>`
+        spotifyWindow.innerHTML += `<h3>Logged in to Spotify as ${response.display_name}<h3>`
         console.log(id);
         $.ajax({//playlists
           url: `https://api.spotify.com/v1/users/${id}/playlists`,
@@ -69,15 +80,16 @@ if (error) {
           success: function (response2) {
             console.log("succcess of 2nd ajax");
             renderSpotifyPlaylists(response2.items);
+            instructions.innerHTML = 'Log in with youtube to continue';
             response2.items.forEach(function (playlist) {//this is where the playlists are rendered
-              spotifyWindow.innerHTML += `<button class="pressable playlist-button" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
+              spotifyWindow.innerHTML += `<button class="pressable playlist-button" id ="${playlist.id}" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
             });
 
           }
         });
         $('#spotify-login').hide();
         $('#spotify-loggedin').show();
-
+        $('#youtube-login').show();
       }
     });
 
@@ -85,26 +97,28 @@ if (error) {
     // render initial screen
     $('#spotify-login').show();
     $('#spotify-loggedin').hide();
+    $('#youtube-login').hide();
   }
-
-  document.getElementById('obtain-new-token').addEventListener('click', function () {
-    $.ajax({
-      url: '/refresh_token',
-      data: {
-        'refresh_token': refresh_token
-      }
-    }).done(function (data) {
-      access_token = data.access_token;
-      oauthPlaceholder.innerHTML = oauthTemplate({
-        access_token: access_token,
-        refresh_token: refresh_token
-      });
-    });
-  }, false);
 }
 
 function renderSpotifyPlaylists(playlists) {
-  playlists.forEach(function(playlist) {
+  playlists.forEach(function (playlist) {
     $("#spotifyhalf").innerHTML += `<dt><a onclick = "selectSpotifyPlaylist('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
   });
 }
+
+
+// document.getElementById('obtain-new-token').addEventListener('click', function () {
+  //   $.ajax({
+  //     url: '/refresh_token',
+  //     data: {
+  //       'refresh_token': refresh_token
+  //     }
+  //   }).done(function (data) {
+  //     access_token = data.access_token;
+  //     oauthPlaceholder.innerHTML = oauthTemplate({
+  //       access_token: access_token,
+  //       refresh_token: refresh_token
+  //     });
+  //   });
+  // }, false);
