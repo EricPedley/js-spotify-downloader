@@ -16,6 +16,18 @@ a:visited {
     color:#121212;
     margin-top:30%;
 }
+#spotify-logout {
+    background-color:#1ed760;
+    padding-top:5px;
+    color:#121212;
+    float:right;
+}
+#youtube-logout {
+    background-color:#FF0000;
+    padding-top:5px;
+    color:#FFFFFF;
+    float:right;
+}
 #spotify-loggedin {
     text-align:left;
 }
@@ -45,6 +57,7 @@ a:visited {
     height:85vh;
     text-align:center;
     overflow:auto;
+    padding-top:10px;
 }
 #spotify-half {
     border-right-style:solid;
@@ -96,4 +109,8 @@ body {
     padding: 5px 10px 5px;
     border-radius:10px;
     background-color:#FFFFFF;
+}
+.loggedin-message {
+    display:inline-block;
+    margin-bottom:0.5em;
 }

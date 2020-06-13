@@ -27,7 +27,7 @@ function selectSpotifyPlaylist(playlistId) {//this is fired when the user select
       playlistButton.style.backgroundColor = "#1ed760";
       playlistButton.style.color = "#121212";
       tracks = response2.tracks.items;//this value is used in gapi.js
-      if(selectedYTPlaylist) {
+      if (selectedYTPlaylist) {
         displayConvertButton();
       }
     }
@@ -70,7 +70,9 @@ if (error) {
       success: function (response) {
         console.log("response to spotify auth: ", response);
         let id = response.id;
-        spotifyWindow.innerHTML += `<h3>Logged in to Spotify as ${response.display_name}<h3>`
+        spotifyWindow.innerHTML = `<h3 class="loggedin-message">Logged in to Spotify as ${response.display_name}</h3>`
+        spotifyWindow.innerHTML += `<a id="spotify-logout" href = "/" onclick="logoutSpotify()">Log Out</a><br>`;
+
         console.log(id);
         $.ajax({//playlists
           url: `https://api.spotify.com/v1/users/${id}/playlists`,
@@ -105,6 +107,12 @@ function renderSpotifyPlaylists(playlists) {
   playlists.forEach(function (playlist) {
     $("#spotifyhalf").innerHTML += `<dt><a onclick = "selectSpotifyPlaylist('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
   });
+}
+
+function logoutSpotify() {
+  const url = 'https://www.spotify.com/logout';
+  const spotifyLogoutWindow = window.open(url, 'Spotify Logout', 'width=10,height=10,top=0,left=0');
+  setTimeout(() => spotifyLogoutWindow.close(), 1000);
 }
 
 

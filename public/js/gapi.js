@@ -42,7 +42,8 @@ function listYTPlaylists() {
     .then(function (response) {
       // Handle the results here (response.result has the parsed body).
       console.log("Response", response);
-      youtubeScreen.innerHTML = `<h3>Logged in to Youtube as ${response.result.items[0].snippet.channelTitle}<h3>`;
+      youtubeScreen.innerHTML = `<h3 class = "loggedin-message">Logged in to Youtube as ${response.result.items[0].snippet.channelTitle}</h3>`;
+      youtubeScreen.innerHTML += `<a id="youtube-logout" href = "${window.location.href}" onclick = "window.location.reload()">Log Out</a><br>`;
       response.result.items.forEach(function (playlist) {
         youtubeScreen.innerHTML += `<button id = '${playlist.id}' class = "pressable playlist-button" onclick = "selectYTPlaylist('${playlist.id}');">${playlist.snippet.title}</button><br>`
       });
