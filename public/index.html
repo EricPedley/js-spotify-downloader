@@ -39,7 +39,8 @@
                 <div id="spotify-loggedin"></div>
             </div>
             <div class="col-md-6 half" id="youtube-half">
-                <a href="#" id="youtube-login"><h3>Log in with Youtube</h3></a>
+                <button onclick = "authenticate().then(loadClient)" id="youtube-login" class="pressable"><h3>Log in with Youtube</h3></button>
+                <div id="youtube-loggedin"></div>
             </div>
         </div>
     </div>

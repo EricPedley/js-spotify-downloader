@@ -70,7 +70,7 @@ if (error) {
             console.log("succcess of 2nd ajax");
             renderSpotifyPlaylists(response2.items);
             response2.items.forEach(function (playlist) {//this is where the playlists are rendered
-              spotifyWindow.innerHTML += `<a  href = "" onclick = "(event)=>{event.preventDefault(); selectSpotifyPlaylist('${playlist.id}');}">${playlist.name}</a><br>`;
+              spotifyWindow.innerHTML += `<button class="pressable playlist-button" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
             });
 
           }

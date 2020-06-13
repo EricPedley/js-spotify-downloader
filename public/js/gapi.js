@@ -1,6 +1,6 @@
 console.log("gapi code ran");
 
-
+var youtubeScreen = document.querySelector("#youtube-loggedin");
 function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to the playlist
   console.log(`SearchAdd being run`);
   return gapi.client.youtube.search.list({
@@ -27,12 +27,12 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
             }
           }
         }
-      }).then(function(response) {
-        console.log(`response to playlist insert for ${searchTerm}:`,response);
-      }, function(err) {console.log("Error",err);});
+      }).then(function (response) {
+        console.log(`response to playlist insert for ${searchTerm}:`, response);
+      }, function (err) { console.log("Error", err); });
     },
       function (err) { console.error("Execute error", err); });
-  }
+}
 
 function listYTPlaylists() {
   return gapi.client.youtube.playlists.list({
@@ -42,9 +42,8 @@ function listYTPlaylists() {
     .then(function (response) {
       // Handle the results here (response.result has the parsed body).
       console.log("Response", response);
-      var holder = document.querySelector("#ytplaylists");
-      response.result.items.forEach(function(playlist) {
-        holder.innerHTML+=`<a onclick = "selectYTPlaylist('${playlist.id}')">${playlist.snippet.title} - ${playlist.id}</a>`
+      response.result.items.forEach(function (playlist) {
+        youtubeScreen.innerHTML += `<button class = "pressable playlist-button" onclick = "(event)=>{event.preventDefault(); selectYTPlaylist('${playlist.id}');}">${playlist.snippet.title}</button>`
       });
     },
       function (err) { console.error("Execute error", err); });
@@ -52,14 +51,14 @@ function listYTPlaylists() {
 
 function selectYTPlaylist(ytPlaylistID) {
   tracks.forEach(function (item) {//for each track in the playlist
-        let track = item.track;
-        let ytquery = track.name + " ";
-        track.artists.forEach(function (artist) {
-          ytquery += `${artist.name} `;
-        });
-        searchAdd(ytquery,ytPlaylistID);//this function is in gapi.js
-        //get requests for yt links don't work because they're blocked by CORS policy of youtube
-      });
+    let track = item.track;
+    let ytquery = track.name + " ";
+    track.artists.forEach(function (artist) {
+      ytquery += `${artist.name} `;
+    });
+    searchAdd(ytquery, ytPlaylistID);//this function is in gapi.js
+    //get requests for yt links don't work because they're blocked by CORS policy of youtube
+  });
 }
 
 gapi.load("client:auth2", function () {
@@ -67,9 +66,15 @@ gapi.load("client:auth2", function () {
 });
 
 function authenticate() {
+
   return gapi.auth2.getAuthInstance()
     .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
-    .then(function () { console.log("Sign-in successful"); },
+    .then(function () {
+      console.log("Sign-in successful");
+      $('#youtube-login').hide();
+      $('#youtube-loggedin').show();
+      youtubeScreen.innerHTML += `<h3>Logged in to Youtube<h3>`
+    },
       function (err) { console.error("Error signing in", err); });
 }
 function loadClient() {

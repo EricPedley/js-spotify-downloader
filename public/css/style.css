@@ -3,7 +3,6 @@
     float:right;
 }
 a:link {
-    color:white;
     display:inline-block;
     padding:10px;
     padding-bottom:5px;
@@ -22,7 +21,21 @@ a:visited {
 }
 #youtube-login {
     background-color:#FF0000;
+    color:#FFFFFF;
     margin-top:30%;
+    padding:10px;
+    padding-bottom:5px;
+    border-radius:10px;
+    border:none;
+}
+.pressable {
+    cursor:pointer;
+}
+.pressable:hover {
+    text-decoration:underline;
+}
+#youtube-loggedin {
+    text-align:left;
 }
 .half {
     height:85vh;
@@ -45,3 +58,11 @@ body {
     background-color:#272727;
     color:white;
 }
+.playlist-button {
+    background-color:transparent;
+    border:none;
+    color:white;
+}
+::-webkit-scrollbar-thumb {
+    background: white;
+  }
