@@ -2,6 +2,7 @@ console.log("gapi code ran");
 
 var youtubeScreen = document.querySelector("#youtube-loggedin");
 var selectedYTPlaylist;
+
 function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to the playlist
   console.log(`SearchAdd being run`);
   return gapi.client.youtube.search.list({
@@ -11,8 +12,8 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
     "q": searchTerm
   })
     .then(function (response) {//this is the response to the search api call
-      console.log("Response", response);
-      console.log(`video id for ${searchTerm}:`, response.result.items[0].id.videoId);
+      // console.log("Response", response);
+      // console.log(`video id for ${searchTerm}:`, response.result.items[0].id.videoId);
       let id = response.result.items[0].id.videoId
       gapi.client.youtube.playlistItems.insert({
         "part": [
@@ -28,7 +29,7 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
           }
         }
       }).then(function (response) {//this is the response to the playlist insert api call
-        console.log(`response to playlist insert for ${searchTerm}:`, response);
+         console.log(`response to playlist insert for ${searchTerm}:`, response);
       }, function (err) { console.log("Error", err); });
     },
       function (err) { console.error("Execute error", err); });
@@ -67,7 +68,6 @@ gapi.load("client:auth2", function () {
 });
 
 function authenticate() {
-
   return gapi.auth2.getAuthInstance()
     .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
     .then(function () {
@@ -87,18 +87,19 @@ function loadClient() {
     },
       function (err) { console.error("Error loading GAPI client for API", err); });
 }
+
 function displayConvertButton() {
   instructions.innerHTML = '<button id="convert-button" class="pressable" onclick="convert()">Convert Playlist</button>';
 }
+
 function convert() {
-  console.log('convert pressed');
-  tracks.forEach(function (item) {//for each track in the playlist
+  tracks.forEach(async function (item) {//for each track in the playlist
     let track = item.track;
     let ytquery = track.name + " ";
     track.artists.forEach(function (artist) {
       ytquery += `${artist.name} `;
     });
-    //searchAdd(ytquery, selectedYTPlaylist);//this function is in gapi.js
+    await searchAdd(ytquery, selectedYTPlaylist);//this function is in gapi.js
   });
   $("#popup").show();
   let popup = document.querySelector("#popup")
@@ -106,6 +107,7 @@ function convert() {
   popup.innerHTML += `<a id = "playlist-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
   popup.innerHTML += `<button id="convert-another" class="pressable" onclick="resetSelection()">Convert another</button>`;
 }
+
 function resetSelection() {
   $('#popup').hide();
   document.getElementById(selectedYTPlaylist).style.backgroundColor = "transparent";
