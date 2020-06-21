@@ -13,9 +13,12 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = '1855a279160e4bb68cc967d94730a324'; // Your client id
-var client_secret = '6fec108743684508a52021ea5309b44b'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+if (process.env.NODE_ENV != "production")
+  require("dotenv").config();
+var client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+var client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
+var redirect_uri = process.env.SPOTIFY_REDIRECT_URI; // Your redirect uri
+
 
 
 
@@ -38,10 +41,10 @@ app.get('/login', function (req, res) {
     }));
 });
 
-app.get('/callback',function(req,res) {
+app.get('/callback', function (req, res) {
   res.redirect("/");
 });
 
-let port = process.env.PORT||8888;
+let port = process.env.PORT || 8888;
 console.log(`Listening on ${port}`);
 app.listen(port);
