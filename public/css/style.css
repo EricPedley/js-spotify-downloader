@@ -61,15 +61,13 @@ a:visited {
 }
 #spotify-half {
     border-right-style:solid;
-    border-right-color:white;
+    border-right-color:#121212;
     border-right-width:2px;
+    margin-top:10px;
 }
-#header {
+.header {
     background-color:#121212;
     /* height:120px; */
-}
-#footer {
-    background-color:#121212;
 }
 body {
     background-color:#272727;
@@ -84,6 +82,7 @@ body {
     background-color:#FFFFFF;
     color:#121212;
     font-size:1.5em;
+    animation: pulse 3s linear infinite;
 }
 #popup {
     display:none;
@@ -97,13 +96,14 @@ body {
     background-color:#121212;
     text-align:center;
     border-radius:20px;
+    overflow:scroll;
 }
 #playlist-link {
     background-color:#FF0000;
     padding-top:5px;
     color:white;
 }
-#convert-another {
+.popup-dismiss {
     position:relative;
     top:1em;
     padding: 5px 10px 5px;
@@ -113,4 +113,15 @@ body {
 .loggedin-message {
     display:inline-block;
     margin-bottom:0.5em;
+} 
+@keyframes pulse {  
+    50% { opacity: 30%; }
+}
+#info-header {
+    text-align:center;
+    margin-top:10px;
+}
+#info {
+    height:60vh;
+    padding-top:15vh;
 }
