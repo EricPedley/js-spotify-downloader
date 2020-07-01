@@ -13,7 +13,7 @@
     "express": "~4.16.0",
     "google-auth-library": "^6.0.2",
     "googleapis": "^52.1.0",
-    "querystring": "~0.2.0",
-    "request": "^2.88.2"
+    "node-fetch": "^2.6.0",
+    "querystring": "~0.2.0"
   }
 }

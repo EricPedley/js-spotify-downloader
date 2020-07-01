@@ -1,10 +1,12 @@
 
 
-var express = require('express'); // Express web server framework
-var cors = require('cors');
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
-var request = require('request');
+const express = require('express'); // Express web server framework
+const cors = require('cors');
+const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
+const fetch = require('node-fetch');
+const {google} = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
 
 if (process.env.NODE_ENV != "production")
   require("dotenv").config();
@@ -38,41 +40,69 @@ app.get('/spotify-login', function (req, res) {
 });
 
 app.get('/youtube-login', function (req, res) {
-  res.redirect('https://accounts.google.com/o/oauth2/v2/auth' +
+  res.redirect('https://accounts.google.com/o/oauth2/v2/auth?' +
     querystring.stringify({
-      client_id:youtube_client_id,
+      client_id: youtube_client_id,
       redirect_uri: youtube_redirect_uri_1,
-      response_type:"code",
-      scope:"https://www.googleapis.com/auth/youtube.force-ssl"
+      response_type: "code",
+      scope: "https://www.googleapis.com/auth/youtube.force-ssl"
     }));
 });
 
-app.get('/youtube-callback', function(req,res) {
+app.get('/youtube-callback', function (req, res) {
+  console.log("youtube callback activated");
   let data = {
-    client_id:youtube_client_id,
-    client_secret:youtube_client_secret,
-    redirect_uri:youtube_redirect_uri_2,
-    code:req.params.code,
-    grant_type:"authorization_code"
+    client_id: youtube_client_id,
+    client_secret: youtube_client_secret,
+    redirect_uri: youtube_redirect_uri_2,
+    code: req.params.code,
+    grant_type: "authorization_code"
   }
+  let formurldata = new URLSearchParams(data).toString();
+  console.log(formurldata);
   let options = {
-    uri:'https://oauth2.googleapis.com/token',
-    body:JSON.stringify(data),
-    method:"POST",
+    body: formurldata,
+    method: "POST",
     headers: {
-      "Content-Type":"application/json"
+      "Content-Type": "application/x-www-form-urlencoded"
     }
   };
-  request(options,function(err,res) {
-    youtube_access_token=res.access_token;
+  fetch('https://oauth2.googleapis.com/token',options).then(function(res){
+    let json = res.json();
+    console.log(res);
+    youtube_access_token=json.access_token;
+    console.log(youtube_access_token);
   });
 });
 
-app.get('/youtube-list-playlists', function(req,res) {
-
+app.get('/youtube-callback-2',function(req,res) {
+  res.redirect("/");
+  //console.log("req",req);
 });
 
-app.post('/youtube-search-and-add', function(req,res) {//TODO: make the search part use pupeteer instead of youtube's api
+app.get('/youtube-list-playlists', function (req, res) {
+  let data = {
+    "part": "snippet",
+    "mine": true
+  }
+  let options = {
+    body: JSON.stringify(data),
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": `Bearer ${youtube_access_token}`
+    }
+  }
+  fetch("https://www.googleapis.com/youtube/v3/playlists", options.then(function (res) {
+    res.json();
+  }).then(function (json) { 
+    console.log("response to google playlist list call: " + JSON.stringify(json)); 
+  })
+  );
+});
+
+app.post('/youtube-search-and-add', function (req, res) {//TODO: make the search part use pupeteer instead of youtube's api
 
 });
 
@@ -83,3 +113,10 @@ app.get('/callback', function (req, res) {
 let port = process.env.PORT || 8888;
 console.log(`Listening on ${port}`);
 app.listen(port);
+
+
+
+
+
+
+
