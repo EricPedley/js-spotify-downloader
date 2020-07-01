@@ -60,6 +60,14 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
 }
 
 function listYTPlaylists() {
+  let req = new XMLHttpRequest;
+  req.open("GET", window.location.host + "/youtube-list-playlists");
+  req.onreadystatechange = function () {
+    if (request.readyState == XMLHttpRequest.DONE) {
+      console.log(request.responseText);
+    }
+  }
+  req.send();
   return gapi.client.youtube.playlists.list({
     "part": "snippet",
     "mine": true
