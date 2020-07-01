@@ -17,7 +17,7 @@ var youtube_client_id = process.env.YOUTUBE_CLIENT_ID;
 var youtube_redirect_uri_1 = process.env.YOUTUBE_REDIRECT_URI_1;
 var youtube_redirect_uri_2 = process.env.YOUTUBE_REDIRECT_URI_2;
 var youtube_client_secret = process.env.YOUTUBE_CLIENT_SECRET;
-
+var oauth2Client = new OAuth2(youtube_client_id,youtube_client_secret,youtube_redirect_uri_1);
 var youtube_access_token;
 
 var app = express();
@@ -40,44 +40,16 @@ app.get('/spotify-login', function (req, res) {
 });
 
 app.get('/youtube-login', function (req, res) {
-  res.redirect('https://accounts.google.com/o/oauth2/v2/auth?' +
-    querystring.stringify({
-      client_id: youtube_client_id,
-      redirect_uri: youtube_redirect_uri_1,
-      response_type: "code",
-      scope: "https://www.googleapis.com/auth/youtube.force-ssl"
-    }));
+  res.redirect(oauth2Client.generateAuthUrl({scope:"https://www.googleapis.com/auth/youtube.force-ssl"}));
 });
 
 app.get('/youtube-callback', function (req, res) {
   console.log(req.query.code);
-  let data = {
-    client_id: youtube_client_id,
-    client_secret: youtube_client_secret,
-    redirect_uri: youtube_redirect_uri_2,
-    code: req.query.code,
-    grant_type: "authorization_code"
-  }
-  let formurldata = new URLSearchParams(data).toString();
-  console.log(formurldata);
-  let options = {
-    body: JSON.stringify(data),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-    }
-  };
-  fetch('https://oauth2.googleapis.com/token',options).then(function(res){
-    let json = res.json();
-    console.log(res);
-    youtube_access_token=json.access_token;
-    console.log(youtube_access_token);
+  oauth2Client.getToken(req.query.code, function(err,token) {
+    console.log("token: ", token)
+    youtube_access_token=token.access_token;
   });
-});
-
-app.get('/youtube-callback-2',function(req,res) {
   res.redirect("/");
-  //console.log("req",req);
 });
 
 app.get('/youtube-list-playlists', function (req, res) {
