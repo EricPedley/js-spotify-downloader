@@ -50,21 +50,21 @@ app.get('/youtube-login', function (req, res) {
 });
 
 app.get('/youtube-callback', function (req, res) {
-  console.log("youtube callback activated");
+  console.log(req.query.code);
   let data = {
     client_id: youtube_client_id,
     client_secret: youtube_client_secret,
     redirect_uri: youtube_redirect_uri_2,
-    code: req.params.code,
+    code: req.query.code,
     grant_type: "authorization_code"
   }
   let formurldata = new URLSearchParams(data).toString();
   console.log(formurldata);
   let options = {
-    body: formurldata,
+    body: JSON.stringify(data),
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
     }
   };
   fetch('https://oauth2.googleapis.com/token',options).then(function(res){
