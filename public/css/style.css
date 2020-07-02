@@ -32,14 +32,9 @@ a:visited {
     text-align:left;
 }
 #youtube-login {
-    display:none;
     background-color:#FF0000;
     color:#FFFFFF;
     margin-top:30%;
-    padding:10px;
-    padding-bottom:5px;
-    border-radius:10px;
-    border:none;
 }
 .pressable {
     border:none;
