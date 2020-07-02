@@ -114,19 +114,3 @@ function logoutSpotify() {
   const spotifyLogoutWindow = window.open(url, 'Spotify Logout', 'width=10,height=10,top=0,left=0');
   setTimeout(() => spotifyLogoutWindow.close(), 1000);
 }
-
-
-// document.getElementById('obtain-new-token').addEventListener('click', function () {
-  //   $.ajax({
-  //     url: '/refresh_token',
-  //     data: {
-  //       'refresh_token': refresh_token
-  //     }
-  //   }).done(function (data) {
-  //     access_token = data.access_token;
-  //     oauthPlaceholder.innerHTML = oauthTemplate({
-  //       access_token: access_token,
-  //       refresh_token: refresh_token
-  //     });
-  //   });
-  // }, false);
