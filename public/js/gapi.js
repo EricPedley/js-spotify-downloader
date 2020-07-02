@@ -14,7 +14,7 @@ function listYTPlaylists() {
   req.open("GET", window.location.href.substring(0,window.location.href.indexOf("#")) + "youtube-list-playlists");
   req.onreadystatechange = function () {
     if (req.readyState == XMLHttpRequest.DONE) {
-      console.log(JSON.parse(req.responseText));
+      console.log(req.responseText);
       let res = JSON.parse(req.responseText);
       $('#youtube-login').hide();
       $('#youtube-loggedin').show();
@@ -26,8 +26,7 @@ function listYTPlaylists() {
     } else {
       if ((req.responseText).includes("quota")) {
         $("#popup").show();
-        let popup = document.querySelector("#popup");
-        showQuotaMessage(popup);
+        showQuotaMessage();
       }
     }
   }
@@ -37,38 +36,18 @@ function listYTPlaylists() {
 
 function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to the playlist
   console.log(`SearchAdd being run`);
-  let req = new XMLHttpRequest;
-  req.open("GET", window.location.href.substring(0,window.location.href.indexOf("#")) + "youtube-search-and-add"+`?term=${serachTerm}&id=${playlistId}`);
+  let popup = document.querySelector("#popup");
+  return new Promise(function(resolve,reject) {
+    let req = new XMLHttpRequest;
+  req.open("GET", window.location.href.substring(0,window.location.href.indexOf("#")) + "youtube-search-and-add"+`?term=${searchTerm}&id=${playlistId}`);
   req.onreadystatechange = function() {
     if(req.readyState==XMLHttpRequest.DONE) {
-      
+      console.log(req.responseText);
+      popup.innerHTML+=`${req.responseText}<br>`;
+      resolve();
     }
   }
   req.send();
-  return gapi.client.youtube.search.list({
-    "part": "snippet",
-    "maxResults": 1,
-    "type": "video",
-    "q": searchTerm
-  }).then(function (response) {//this is the response to the search api call
-    // console.log("Response", response);
-    // console.log(`video id for ${searchTerm}:`, response.result.items[0].id.videoId);
-    let id = response.result.items[0].id.videoId;
-    console.log(`id for ${searchTerm}: ${id}`);
-    return gapi.client.youtube.playlistItems.insert({
-      "part": [
-        "snippet"
-      ],
-      "resource": {
-        "snippet": {
-          "playlistId": playlistId,
-          "resourceId": {
-            "kind": "youtube#video",
-            "videoId": id
-          }
-        }
-      }
-    });
   });
 }
 
@@ -100,20 +79,10 @@ async function convert() {
     track.artists.forEach(function (artist) {
       ytquery += `${artist.name} `;
     });
-    //popup.innerHTML+=`${ytquery}<br>`
-    await searchAdd(ytquery, selectedYTPlaylist)
-      .then(function (response) {
-        console.log(response);
-        popup.innerHTML += `${response.result.snippet.title}<br>`
-      }).catch(function (error) {
-        if (error.result.error.message.includes("quota")) {
-          showQuotaMessage(popup);
-        }
-        console.log(error.result.error.message);
-      });//this function is in gapi.js
+    await searchAdd(ytquery, selectedYTPlaylist);
   }
   //popup.innerHTML = "<h3>Playlist Conversion Finished</h3>";
-  popup.innerHTML += `<a id = "playlist-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
+  popup.innerHTML += `<a id = "playlist-link" class = "small-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
   popup.innerHTML += `<button class="pressable popup-dismiss" onclick="resetSelection('Select playlists to continue')">Convert another</button>`;
 }
 
@@ -132,7 +101,8 @@ function resetSelection(message) {
   instructions.innerHTML = message;
 }
 
-function showQuotaMessage(popup) {
+function showQuotaMessage() {
+  let popup = document.querySelector("#popup");
   popup.innerHTML += "<h5>Youtube data quota exceeded, try again tomorrow</h5>";
   popup.innerHTML += `<a style="color:#121212" href="#info" class="pressable popup-dismiss" onclick="resetSelection('Try again tomorrow')">What?</a>`;
 
