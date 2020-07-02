@@ -19,7 +19,7 @@ function listYTPlaylists() {
       $('#youtube-login').hide();
       $('#youtube-loggedin').show();
       youtubeScreen.innerHTML = `<h3 class = "loggedin-message">Logged in to Youtube as ${res.items[0].snippet.channelTitle}</h3>`;
-      youtubeScreen.innerHTML += `<a id="youtube-logout" href = "${window.location.href}" onclick = "window.location.reload()" class= "small-link">Log Out</a><br>`;
+      youtubeScreen.innerHTML += `<a id="youtube-logout" href = "${window.location.href}" onclick = "window.location.reload()" class= "logout-button youtube-colors small-link">Log Out</a><br>`;
       res.items.forEach(function (playlist) {
         youtubeScreen.innerHTML += `<button id = '${playlist.id}' class = "pressable playlist-button" onclick = "selectYTPlaylist('${playlist.id}');">${playlist.snippet.title}</button><br>`
       });

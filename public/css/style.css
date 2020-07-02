@@ -11,8 +11,11 @@
 .small-link {
     border-radius:5px;
 }
-a:visited {
-    color:white;
+a:hover.spotify-colors {
+    color:#FFFFFF;
+}
+a:hover.youtube-colors {
+    color:#121212;
 }
 #spotify-login {
     margin-top:30%;
@@ -112,4 +115,10 @@ body {
 }
 #bottom-section {
     background-color:#121212;
+}
+#github-link {
+    color:#121212;
+    background-color:#FFFFFF;
+    padding:0px 2px;
+    margin:0px 2px 0px 1px;
 }
