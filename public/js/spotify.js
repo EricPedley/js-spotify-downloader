@@ -61,8 +61,7 @@ if (error) {
   alert('There was an error during the authentication');
 } else {
   if (access_token) {
-
-    $.ajax({
+    $.ajax({//get user information
       url: 'https://api.spotify.com/v1/me',
       headers: {
         'Authorization': 'Bearer ' + access_token
@@ -71,10 +70,10 @@ if (error) {
         console.log("response to spotify auth: ", response);
         let id = response.id;
         spotifyWindow.innerHTML = `<h3 class="loggedin-message">Logged in to Spotify as ${response.display_name}</h3>`
-        spotifyWindow.innerHTML += `<a id="spotify-logout" href = "/" onclick="logoutSpotify()">Log Out</a><br>`;
+        spotifyWindow.innerHTML += `<a id="spotify-logout" href = "/" onclick="logoutSpotify()" class = "small-link">Log Out</a><br>`;
 
         console.log(id);
-        $.ajax({//playlists
+        $.ajax({//get list of playlists
           url: `https://api.spotify.com/v1/users/${id}/playlists`,
           headers: {
             'Authorization': 'Bearer ' + access_token
@@ -91,6 +90,7 @@ if (error) {
         });
         $('#spotify-login').hide();
         $('#spotify-loggedin').show();
+        document.querySelector("#youtube-login").href += "?spotify_params=" + window.location.href.split("=")[1];//change href of youtube button and display it so that the spotify access token doesn't disappear
         $('#youtube-login').show();
       }
     });

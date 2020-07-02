@@ -16,7 +16,6 @@
     <link href='https://fonts.googleapis.com/css?family=Chakra Petch' rel='stylesheet'>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="images/icon.png">
-    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 
 <body>
@@ -35,17 +34,14 @@
     <div class="container-fluid">
         <div class="row align-items-center" id="main">
             <div class="col-md-6 half" id="spotify-half">
-                <a href="/spotify-login" id="spotify-login">
+                <a href="/spotify-login" id="spotify-login" class= "big-link">
                     <h3>Log in with Spotify</h3>
                 </a>
                 <div id="spotify-loggedin"></div>
             </div>
 
             <div class="col-md-6 half" id="youtube-half">
-                <button onclick="authenticate().then(loadClient)"class="pressable">
-                    <h3>Log in with Youtube(old)</h3>
-                </button>
-                <a href="/youtube-login" id="youtube-login">
+                <a href="/youtube-login" id="youtube-login" class= "big-link">
                     <h3>Log in with Youtube</h3>
                 </a>
                 <div id="youtube-loggedin"></div>
@@ -54,23 +50,28 @@
 
         <div id="popup"></div>
     </div>
-    <div class="header" id="info-header">
-        <h3>Info</h3>
-    </div>
-    <div class="container" id="info">
-        <h4>Quota Error Message</h4>
-        <p>This website uses the youtube data api to list and add songs to your playlists. Youtube gives each API
-            client(this website is one client) a free daily quota of 10,000 units. Each song converted costs 152 units
-            and listing a user's YT playlists costs 1 unit, so the website as a whole can only process roughly 65 songs
-            per day. If the quota is filled you will see an error message and have to wait to transfer your songs.</p>
-        <h4>Source Code</h4>
-        <p>The source code for this website is available on Github at <a
-                href="https://github.com/EricPedley/js-spotify-converter">EricPedley/js-spotify-converter</a>. The
-            project uses the spotify and youtube apis, so if you want to use the code you need to generate your own api
-            keys.</p>
+    <div id="bottom-section">
+        <div class="container" id="info">
+
+            <h1>Info</h1>
+            <br>
+            <h4>Quota Error Message</h4>
+            <p>This website uses the youtube data api to list and add songs to your playlists. Youtube gives each API
+                client(this website is one client) a free daily quota of 10,000 units. Each song converted costs 152
+                units
+                and listing a user's YT playlists costs 1 unit, so the website as a whole can only process roughly 65
+                songs
+                per day. If the quota is filled you will see an error message and have to wait to transfer your songs.
+            </p>
+            <h4>Source Code</h4>
+            <p>The source code for this website is available on Github at <a
+                    href="https://github.com/EricPedley/js-spotify-converter">EricPedley/js-spotify-converter</a>. The
+                project uses the spotify and youtube apis, so if you want to use the code you need to generate your own
+                api
+                keys.</p>
+        </div>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="js/index.js"></script>
     <script src="js/spotify.js"></script>
     <script src="js/gapi.js"></script>
 </body>
