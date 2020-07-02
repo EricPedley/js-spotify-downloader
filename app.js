@@ -5,7 +5,6 @@ const cors = require('cors');
 const spotifyAuth = require("./endpoints/spotify-auth");
 const youtubeAuth = require("./endpoints/youtube-auth");
 const youtubeActions = require("./endpoints/youtube-actions");
-const {google} = require("googleapis");
 
 var app = express();
 
