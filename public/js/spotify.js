@@ -70,7 +70,7 @@ if (error) {
         console.log("response to spotify auth: ", response);
         let id = response.id;
         spotifyWindow.innerHTML = `<h3 class="loggedin-message">Logged in to Spotify as ${response.display_name}</h3>`
-        spotifyWindow.innerHTML += `<a id="spotify-logout" href = "/" onclick="logoutSpotify()" class = "small-link">Log Out</a><br>`;
+        spotifyWindow.innerHTML += `<a id="spotify-logout" href = "/" onclick="logoutSpotify()" class = "small-link spotify-colors">Log Out</a><br>`;
 
         console.log(id);
         $.ajax({//get list of playlists
