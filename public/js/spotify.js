@@ -4,31 +4,43 @@ How the program works in steps:
 -after authenticating with spotify it displays all of their playlists and buttons for authenticating with google
 -the user has to press the button to authenticate with google
 -then they click on the playlist they want to convert(this calls the "selectSpotifyPlaylist" function)
--that brings up a list of their youtube playlists(this is done with the "listYTPlaylists" function in gapi.js)
--when they click on a youtube playlist it does the converting(with the "selectYTPlaylist" function in gapi.js, which calls the "searchAdd" function on each track)
+-that brings up a list of their youtube playlists(this is done with the "listYTPlaylists" function in youtube.js)
+-when they click on a youtube playlist it does the converting(with the "selectYTPlaylist" function in youtube.js, which calls the "searchAdd" function on each track)
 */
-var tracks;
+var tracks = [];
 var selectedSpotifyPlaylist;
 var instructions = document.getElementById('instructions');
 function selectSpotifyPlaylist(playlistId) {//this is fired when the user selects a playlist
+  loadNextPlaylistPage(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, function (response2) {
+    if (selectedSpotifyPlaylist) {
+      let selectedButton = document.getElementById(selectedSpotifyPlaylist);
+      selectedButton.style.backgroundColor = "transparent";
+      selectedButton.style.color = "#FFFFFF";
+    }
+    selectedSpotifyPlaylist = playlistId;
+    let playlistButton = document.getElementById(playlistId);
+    playlistButton.style.backgroundColor = "#1ed760";
+    playlistButton.style.color = "#121212";
+    if (selectedYTPlaylist) {
+      displayConvertButton();
+    }
+  });
+}
+
+function loadNextPlaylistPage(url, callback) {
   $.ajax({//playlists
-    url: `https://api.spotify.com/v1/playlists/${playlistId}`,
+    url: url,
     headers: {
       'Authorization': 'Bearer ' + access_token
     },
-    success: function (response2) {
-      if (selectedSpotifyPlaylist) {
-        let selectedButton = document.getElementById(selectedSpotifyPlaylist);
-        selectedButton.style.backgroundColor = "transparent";
-        selectedButton.style.color = "#FFFFFF";
-      }
-      selectedSpotifyPlaylist = playlistId;
-      let playlistButton = document.getElementById(playlistId);
-      playlistButton.style.backgroundColor = "#1ed760";
-      playlistButton.style.color = "#121212";
-      tracks = response2.tracks.items;//this value is used in gapi.js
-      if (selectedYTPlaylist) {
-        displayConvertButton();
+    success: function (res) {
+      console.log(res);
+      for (let i = 0; i < res.items.length; i++)
+        tracks.push(res.items[i].track);
+      if (!res.next) {
+        callback(res);
+      } else {
+        loadNextPlaylistPage(res.next, callback);
       }
     }
   });
@@ -81,7 +93,6 @@ if (error) {
           success: function (response2) {
             console.log("succcess of 2nd ajax");
             renderSpotifyPlaylists(response2.items);
-            instructions.innerHTML = 'Log in with youtube to continue';
             response2.items.forEach(function (playlist) {//this is where the playlists are rendered
               spotifyWindow.innerHTML += `<button class="pressable playlist-button" id ="${playlist.id}" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
             });
@@ -90,6 +101,7 @@ if (error) {
         });
         $('#spotify-login').hide();
         $('#spotify-loggedin').show();
+        instructions.innerHTML = 'Log in with youtube to continue';
         document.querySelector("#youtube-login").href += "?spotify_params=" + window.location.href.split("=")[1];//change href of youtube button and display it so that the spotify access token doesn't disappear
         $('#youtube-login').show();
       }

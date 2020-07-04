@@ -1,5 +1,3 @@
-console.log("gapi code ran");
-
 var youtubeScreen = document.querySelector("#youtube-loggedin");
 var selectedYTPlaylist;
 var params = getHashParams();
@@ -15,9 +13,13 @@ function listYTPlaylists() {
   req.onreadystatechange = function () {
     if (req.readyState == XMLHttpRequest.DONE) {
       console.log(req.responseText);
-      let res = JSON.parse(req.responseText);
       $('#youtube-login').hide();
       $('#youtube-loggedin').show();
+      if(req.responseText=="quotaExceeded"){
+        showQuotaMessage();
+        return;
+      }
+      let res = JSON.parse(req.responseText);
       youtubeScreen.innerHTML = `<h3 class = "loggedin-message">Logged in to Youtube as ${res.items[0].snippet.channelTitle}</h3>`;
       youtubeScreen.innerHTML += `<a id="youtube-logout" href = "${window.location.href}" onclick = "window.location.reload()" class= "logout-button youtube-colors small-link">Log Out</a><br>`;
       res.items.forEach(function (playlist) {
@@ -43,8 +45,14 @@ function searchAdd(searchTerm, playlistId) {//searches for a song and adds it to
   req.onreadystatechange = function() {
     if(req.readyState==XMLHttpRequest.DONE) {
       console.log(req.responseText);
+      if(req.responseText='quotaExceeded'){
+        showQuotaMessage();
+        return;
+      }
       popup.innerHTML+=`${req.responseText}<br>`;
       resolve();
+    } else {
+      console.log(req.readyState);
     }
   }
   req.send();
@@ -73,15 +81,15 @@ async function convert() {
   let popup = document.querySelector("#popup");
   popup.innerHTML = "<h3>Tracks Added:</h3>";
   console.log(tracks);
-  for (let i = 0; i < tracks.length; i++) {
-    let track = tracks[i].track;
+  while(tracks.length>0) {
+    let track = tracks.pop();
     let ytquery = track.name + " ";
     track.artists.forEach(function (artist) {
       ytquery += `${artist.name} `;
     });
     await searchAdd(ytquery, selectedYTPlaylist);
   }
-  //popup.innerHTML = "<h3>Playlist Conversion Finished</h3>";
+  popup.innerHTML = "<br><h3>Playlist Conversion Finished</h3>";
   popup.innerHTML += `<a id = "playlist-link" class = "small-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
   popup.innerHTML += `<button class="pressable popup-dismiss" onclick="resetSelection('Select playlists to continue')">Convert another</button>`;
 }
