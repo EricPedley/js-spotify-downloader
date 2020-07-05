@@ -92,7 +92,7 @@ body {
     background-color:#121212;
     text-align:center;
     border-radius:20px;
-    overflow:scroll;
+    overflow-y:auto;
 }
 .popup-dismiss {
     position:relative;
@@ -120,4 +120,21 @@ body {
     background-color:#FFFFFF;
     padding:0px 2px;
     margin:0px 2px 0px 1px;
+}
+#remaining {
+    width:100%;
+}
+#spotify-import {
+    width:80%;
+    background-color:#121212;
+    border-color:#1ed760;
+    color:white;
+    height:100%;
+    border-radius:5px;
+}
+#import-holder {
+    height:70%;
+}
+#import-submit {
+    
 }

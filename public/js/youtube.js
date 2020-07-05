@@ -81,13 +81,15 @@ async function convert() {
   let popup = document.querySelector("#popup");
   popup.innerHTML = "<h3>Tracks Added:</h3>";
   console.log(tracks);
+  let count =3;
   while(tracks.length>0) {
+    count--;
+    if(count<0){
+      showQuotaMessage();
+      break;
+    }
     let track = tracks.pop();
-    let ytquery = track.name + " ";
-    track.artists.forEach(function (artist) {
-      ytquery += `${artist.name} `;
-    });
-    await searchAdd(ytquery, selectedYTPlaylist);
+    await searchAdd(track, selectedYTPlaylist);
   }
   popup.innerHTML = "<br><h3>Playlist Conversion Finished</h3>";
   popup.innerHTML += `<a id = "playlist-link" class = "small-link" target="_blank" href = "https://www.youtube.com/playlist?list=${selectedYTPlaylist}">Link to playlist</a><br>`;
@@ -112,7 +114,6 @@ function resetSelection(message) {
 function showQuotaMessage() {
   let popup = document.querySelector("#popup");
   popup.innerHTML += "<h5>Youtube data quota exceeded, try again tomorrow</h5>";
-  popup.innerHTML += `Remaining Tracks:<br>${tracks.toString()}`;
+  popup.innerHTML += `<div id = "remaining"> Remaining Tracks:<br>${JSON.stringify(tracks)}</div>`;
   popup.innerHTML += `<a style="color:#121212" href="#info" class="pressable popup-dismiss" onclick="resetSelection('Try again tomorrow')">What?</a>`;
-
 } 

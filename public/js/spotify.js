@@ -10,6 +10,63 @@ How the program works in steps:
 var tracks = [];
 var selectedSpotifyPlaylist;
 var instructions = document.getElementById('instructions');
+
+class StarterButtons extends React.Component {
+  render() {
+    return (<div>
+      <a href="/spotify-login" id="spotify-login" className="big-link spotify-colors">
+        <h3>Log in with Spotify</h3>
+      </a>
+      <br></br>
+      <br></br>
+      <button id="import-button" className="pressable big-link">
+        <h3>Or Import Tracks From JSON</h3>
+      </button>
+    </div>
+    );
+  }
+}
+
+class PlaylistSelect extends React.Component {
+  render() {
+    return (<div>
+
+    </div>);
+  }
+}
+
+class ImportScreen extends React.Component {
+  render() {
+    return (<div>
+
+      </div>);
+  }
+}
+
+class PlaylistView extends React.Compoent {
+  render() {
+    return (<div>
+
+      </div>);
+  }
+}
+
+
+
+document.querySelector("#import-button").onclick = function () {
+  $('#spotify-login').hide();
+  $('#spotify-loggedin').hide();
+  $('#import-button').hide();
+  document.querySelector("#import-holder").innerHTML = '<h3>Enter JSON Text Here:</h3><textarea wrap="soft" id="spotify-import"></textarea><button class="pressable small-link" id="import-submit"><h4>Import Playlist<h4></button>';
+  instructions.innerHTML = "Enter the JSON formatted list of songs into the text box";
+};
+
+document.querySelector("#import-submit").onclick = function () {
+  let text = document.querySelector("#spotify-import").value;
+  tracks = JSON.parse(text);
+  instructions.innerHTML = "Choose a Youtube Playlist";
+}
+
 function selectSpotifyPlaylist(playlistId) {//this is fired when the user selects a playlist
   loadNextPlaylistPage(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, function (response2) {
     if (selectedSpotifyPlaylist) {
@@ -35,8 +92,14 @@ function loadNextPlaylistPage(url, callback) {
     },
     success: function (res) {
       console.log(res);
-      for (let i = 0; i < res.items.length; i++)
-        tracks.push(res.items[i].track);
+      for (let i = 0; i < res.items.length; i++) {
+        let track = res.items[i].track;
+        let display = track.name + " ";
+        for (let artist of track.artists)
+          display += artist.name;
+        tracks.push(display);
+
+      }
       if (!res.next) {
         callback(res);
       } else {
@@ -92,9 +155,8 @@ if (error) {
           },
           success: function (response2) {
             console.log("succcess of 2nd ajax");
-            renderSpotifyPlaylists(response2.items);
             response2.items.forEach(function (playlist) {//this is where the playlists are rendered
-              spotifyWindow.innerHTML += `<button class="pressable playlist-button" id ="${playlist.id}" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
+              spotifyWindow.innerHTML += `<button class="pressable playlist-button small-link" id ="${playlist.id}" onclick = "selectSpotifyPlaylist('${playlist.id}');">${playlist.name}</button><br>`;
             });
 
           }
@@ -113,12 +175,6 @@ if (error) {
     $('#spotify-loggedin').hide();
     $('#youtube-login').hide();
   }
-}
-
-function renderSpotifyPlaylists(playlists) {
-  playlists.forEach(function (playlist) {
-    $("#spotifyhalf").innerHTML += `<dt><a onclick = "selectSpotifyPlaylist('${playlist.id}','${access_token}')">${playlist.name} - ${playlist.id}</a></dt>`;
-  });
 }
 
 function logoutSpotify() {

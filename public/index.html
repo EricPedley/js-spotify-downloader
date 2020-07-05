@@ -16,6 +16,10 @@
     <link href='https://fonts.googleapis.com/css?family=Chakra Petch' rel='stylesheet'>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="images/icon.png">
+    <!--React Scripts-->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 </head>
 
 <body>
@@ -37,13 +41,13 @@
                 <a href="/spotify-login" id="spotify-login" class="big-link spotify-colors">
                     <h3>Log in with Spotify</h3>
                 </a>
+                <div id="spotify-loggedin"></div>
                 <br>
                 <br>
-                <button class="pressable big-link">
+                <button id ="import-button" class="pressable big-link">
                     <h3>Or Import Tracks From JSON</h3>
                 </button>
-                <div id="spotify-loggedin"></div>
-                <div id="spotify-import"></div>
+                <div id="import-holder"></div>
             </div>
 
             <div class="col-md-6 half" id="youtube-half">
@@ -77,8 +81,8 @@
         </div>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="js/spotify.js"></script>
-    <script src="js/youtube.js"></script>
+    <script type = "text/babel" src="js/spotify.js"></script>
+    <script type = "text/babel" src="js/youtube.js"></script>
 </body>
 
 </html>
