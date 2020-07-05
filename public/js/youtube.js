@@ -112,6 +112,7 @@ function resetSelection(message) {
 function showQuotaMessage() {
   let popup = document.querySelector("#popup");
   popup.innerHTML += "<h5>Youtube data quota exceeded, try again tomorrow</h5>";
+  popup.innerHTML += `Remaining Tracks:<br>${tracks.toString()}`;
   popup.innerHTML += `<a style="color:#121212" href="#info" class="pressable popup-dismiss" onclick="resetSelection('Try again tomorrow')">What?</a>`;
 
 } 

@@ -41,7 +41,6 @@ a:hover.youtube-colors {
 .pressable {
     border:none;
     cursor:pointer;
-    border-radius:5px;
     text-align:left;
 }
 .pressable:hover {
