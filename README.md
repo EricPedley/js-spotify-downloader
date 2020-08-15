@@ -1,4 +1,7 @@
 # Spotify to Youtube Playlist Converter
+
+I remade this project using react at https://github.com/EricPedley/spotify-yt-react. This version has basically the same functionality but with a less developed UI. I remade it in react because building single page functionality with vanilla javascript was getting too unmaintainable.
+
 How to set up:
 This project uses the youtube data api v3 and spotify's api. You need api credentials from both. 
 To use the program you need these environment variables. If you're hosting on a cloud provider you can usually set them up there or locally create a .env file:
